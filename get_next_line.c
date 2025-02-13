@@ -6,7 +6,7 @@
 /*   By: atabarea <atabarea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 10:10:48 by alex              #+#    #+#             */
-/*   Updated: 2025/02/13 10:31:27 by atabarea         ###   ########.fr       */
+/*   Updated: 2025/02/13 11:42:37 by atabarea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,11 @@ static char	*read_line(int fd, char *remainder)
 	int		bytes_read;
 
 	bytes_read = read(fd, buffer, BUFFER_SIZE);
+	if (bytes_read < 0)
+	{
+		free(remainder);
+		return (NULL);
+	}
 	while (bytes_read > 0)
 	{
 		buffer[bytes_read] = '\0';
@@ -33,39 +38,48 @@ static char	*read_line(int fd, char *remainder)
 		if (ft_strchr(remainder, '\n'))
 			break ;
 	}
-	if (bytes_read < 0)
+	return (remainder);
+}
+
+static char	*proc_nl(char *remainder, char **new_remainder, char *newpos)
+{
+	char	*aux;
+	size_t	len;
+
+	len = newpos - remainder + 1;
+	aux = malloc(sizeof(char) * (len + 1));
+	if (!aux)
 	{
 		free(remainder);
 		return (NULL);
 	}
-	return (remainder);
+	ft_strlcpy(aux, remainder, len + 1);
+	*new_remainder = ft_strdup(newpos + 1);
+	if (!(*new_remainder))
+	{
+		free(remainder);
+		free(aux);
+		return (NULL);
+	}
+	free(remainder);
+	return (aux);
 }
 
 static char	*store_line(char *remainder, char **new_remainder)
 {
 	char	*aux;
 	char	*newpos;
-	size_t	len;
 
 	if (!remainder)
 		return (NULL);
 	newpos = ft_strchr(remainder, '\n');
-	if (newpos)
-	{
-		len = newpos - remainder + 1;
-		aux = malloc(sizeof(char) * (len + 1));
-		if (!aux)
-			return (NULL);
-		ft_strlcpy(aux, remainder, len + 1);
-		*new_remainder = ft_strdup(newpos + 1);
-		free(remainder);
-	}
-	else
+	if (!newpos)
 	{
 		aux = remainder;
-		new_remainder = NULL;
+		*new_remainder = NULL;
+		return (aux);
 	}
-	return (aux);
+	return (proc_nl(remainder, new_remainder, newpos));
 }
 
 char	*get_next_line(int fd)
@@ -78,7 +92,8 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, NULL, 0) < 0)
 	{
 		free(remainder);
-		return (remainder = NULL);
+		remainder = NULL;
+		return (NULL);
 	}
 	if (!remainder)
 	{
