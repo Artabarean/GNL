@@ -32,7 +32,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	i = 0;
 	if (!s1 || !s2)
 		return (NULL);
-	memrsv = malloc(ft_strlen(s1) + ft_strlen(s2) * sizeof(char) + 1);
+	memrsv = malloc((ft_strlen(s1) + ft_strlen(s2)) + 1);
 	if (memrsv == NULL)
 		return (NULL);
 	while (*s1 != '\0')
@@ -56,10 +56,10 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	size_t	i;
 	size_t	srcsize;
 
-	srcsize = ft_strlen(src);
-	i = 0;
 	if (!dst || !src)
 		return (0);
+	srcsize = ft_strlen(src);
+	i = 0;
 	if (size != 0)
 	{
 		while (i < (size - 1) && src[i] != '\0')
@@ -77,6 +77,8 @@ char	*ft_strchr(const char *s, int c)
 	int	i;
 
 	i = 0;
+	if (!s)
+		return (NULL);
 	while (s[i])
 	{
 		if (s[i] == (char)c)
@@ -91,22 +93,17 @@ char	*ft_strchr(const char *s, int c)
 char	*ft_strdup(const char *s)
 {
 	char	*clone;
-	int		i;
-	int		j;
+	size_t	len;
+	size_t	i;
 
-	j = 0;
 	i = 0;
-	while (s[j] != '\0')
-		j++;
-	clone = (char *)malloc(j * sizeof(char) + 1);
+	len = ft_strlen(s);
+	clone = (char *)malloc(len + 1);
 	if (clone == NULL)
-	{
 		return (NULL);
-	}
-	while (*s != '\0')
+	while (i < len)
 	{
 		clone[i] = *s;
-		s++;
 		i++;
 	}
 	clone[i] = '\0';

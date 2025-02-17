@@ -6,11 +6,17 @@
 /*   By: atabarea <atabarea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 10:10:48 by alex              #+#    #+#             */
-/*   Updated: 2025/02/13 11:42:37 by atabarea         ###   ########.fr       */
+/*   Updated: 2025/02/17 11:09:20 by atabarea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+static char	*free_str(char	*str)
+{
+	free(str);
+	return (NULL);
+}
 
 static char	*read_line(int fd, char *remainder)
 {
@@ -18,25 +24,24 @@ static char	*read_line(int fd, char *remainder)
 	char	*temp;
 	int		bytes_read;
 
+	if (!remainder)
+		return (NULL);
 	bytes_read = read(fd, buffer, BUFFER_SIZE);
 	if (bytes_read < 0)
-	{
-		free(remainder);
-		return (NULL);
-	}
+		return (free_str(remainder));
+	if (bytes_read == 0 && remainder[0] == '\0')
+		return (free_str(remainder));
 	while (bytes_read > 0)
 	{
 		buffer[bytes_read] = '\0';
 		temp = ft_strjoin(remainder, buffer);
 		if (!temp)
-		{
-			free(remainder);
-			return (NULL);
-		}
+			return (free_str(remainder));
 		free(remainder);
 		remainder = temp;
 		if (ft_strchr(remainder, '\n'))
 			break ;
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
 	}
 	return (remainder);
 }
@@ -49,10 +54,7 @@ static char	*proc_nl(char *remainder, char **new_remainder, char *newpos)
 	len = newpos - remainder + 1;
 	aux = malloc(sizeof(char) * (len + 1));
 	if (!aux)
-	{
-		free(remainder);
-		return (NULL);
-	}
+		return (free_str(remainder));
 	ft_strlcpy(aux, remainder, len + 1);
 	*new_remainder = ft_strdup(newpos + 1);
 	if (!(*new_remainder))
@@ -75,6 +77,12 @@ static char	*store_line(char *remainder, char **new_remainder)
 	newpos = ft_strchr(remainder, '\n');
 	if (!newpos)
 	{
+		if (*remainder == '\0')
+		{
+			free(remainder);
+			*new_remainder = NULL;
+			return (NULL);
+		}
 		aux = remainder;
 		*new_remainder = NULL;
 		return (aux);
@@ -99,7 +107,7 @@ char	*get_next_line(int fd)
 	{
 		remainder = ft_strdup("");
 		if (!remainder)
-			return (NULL);
+			return (free_str(remainder));
 	}
 	remainder = read_line(fd, remainder);
 	if (!remainder)
@@ -108,3 +116,23 @@ char	*get_next_line(int fd)
 	remainder = new_remainder;
 	return (line);
 }
+
+// #include <stdio.h>
+// int main()
+// {
+// 	int	fd = open("test.txt", O_RDONLY);
+
+// 	if (fd == -1)
+// 	{
+// 		perror("Error opening file");
+// 		return (1);
+// 	}
+// 	char *line;
+// 	while ((line = get_next_line(fd)) != NULL)
+// 	{
+// 		printf("%s", line);
+// 		free(line);
+// 	}
+//     close(fd);
+//     return (0);
+// }

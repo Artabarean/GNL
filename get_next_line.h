@@ -6,7 +6,7 @@
 /*   By: atabarea <atabarea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 10:13:23 by alex              #+#    #+#             */
-/*   Updated: 2025/02/13 10:50:41 by atabarea         ###   ########.fr       */
+/*   Updated: 2025/02/17 11:02:59 by atabarea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stddef.h>
 # include <stdint.h>
 # include <unistd.h>
+# include <fcntl.h>
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
 # endif
