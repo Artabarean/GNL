@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: atabarea <atabarea@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 10:10:48 by alex              #+#    #+#             */
-/*   Updated: 2025/02/17 11:09:20 by atabarea         ###   ########.fr       */
+/*   Updated: 2025/02/18 12:01:14 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ char	*get_next_line(int fd)
 	}
 	remainder = read_line(fd, remainder);
 	if (!remainder)
-		return (NULL);
+		return (remainder = NULL);
 	line = store_line(remainder, &new_remainder);
 	remainder = new_remainder;
 	return (line);
@@ -121,7 +121,6 @@ char	*get_next_line(int fd)
 // int main()
 // {
 // 	int	fd = open("test.txt", O_RDONLY);
-
 // 	if (fd == -1)
 // 	{
 // 		perror("Error opening file");

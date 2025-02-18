@@ -56,19 +56,18 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	size_t	i;
 	size_t	srcsize;
 
-	if (!dst || !src)
+	if (!src)
 		return (0);
 	srcsize = ft_strlen(src);
+	if (!dst || size == 0)
+		return (srcsize);
 	i = 0;
-	if (size != 0)
+	while (i < (size - 1) && src[i] != '\0')
 	{
-		while (i < (size - 1) && src[i] != '\0')
-		{
-			dst[i] = src[i];
-			i++;
-		}
-		dst[i] = '\0';
+		dst[i] = src[i];
+		i++;
 	}
+	dst[i] = '\0';
 	return (srcsize);
 }
 
@@ -104,6 +103,7 @@ char	*ft_strdup(const char *s)
 	while (i < len)
 	{
 		clone[i] = *s;
+		s++;
 		i++;
 	}
 	clone[i] = '\0';
