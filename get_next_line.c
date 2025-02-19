@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 10:10:48 by alex              #+#    #+#             */
-/*   Updated: 2025/02/18 12:01:14 by alex             ###   ########.fr       */
+/*   Updated: 2025/02/19 11:26:57 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ char	*get_next_line(int fd)
 // 	char *line;
 // 	while ((line = get_next_line(fd)) != NULL)
 // 	{
-// 		printf("%s", line);
+// 		printf("%s\n", line);
 // 		free(line);
 // 	}
 //     close(fd);
