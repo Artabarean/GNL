@@ -3,47 +3,49 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: atabarea <atabarea@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 10:10:48 by alex              #+#    #+#             */
-/*   Updated: 2025/02/19 11:26:57 by alex             ###   ########.fr       */
+/*   Updated: 2025/02/20 11:50:16 by atabarea         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*free_str(char	*str)
+static char	*free_str(char	*s1, char *s2)
 {
-	free(str);
+	free(s1);
+	free(s2);
 	return (NULL);
 }
 
 static char	*read_line(int fd, char *remainder)
 {
-	char	buffer[BUFFER_SIZE + 1];
+	char	*buffer;
 	char	*temp;
 	int		bytes_read;
 
 	if (!remainder)
 		return (NULL);
+	buffer = malloc(BUFFER_SIZE + 1);
+	if (!buffer)
+		return (free_str(remainder, buffer));
 	bytes_read = read(fd, buffer, BUFFER_SIZE);
-	if (bytes_read < 0)
-		return (free_str(remainder));
-	if (bytes_read == 0 && remainder[0] == '\0')
-		return (free_str(remainder));
+	if (bytes_read < 0 || (bytes_read == 0 && !*remainder))
+		return (free_str(remainder, buffer));
 	while (bytes_read > 0)
 	{
 		buffer[bytes_read] = '\0';
 		temp = ft_strjoin(remainder, buffer);
-		if (!temp)
-			return (free_str(remainder));
 		free(remainder);
+		if (!temp)
+			return (free(buffer), NULL);
 		remainder = temp;
 		if (ft_strchr(remainder, '\n'))
 			break ;
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 	}
-	return (remainder);
+	return (free(buffer), remainder);
 }
 
 static char	*proc_nl(char *remainder, char **new_remainder, char *newpos)
@@ -54,15 +56,14 @@ static char	*proc_nl(char *remainder, char **new_remainder, char *newpos)
 	len = newpos - remainder + 1;
 	aux = malloc(sizeof(char) * (len + 1));
 	if (!aux)
-		return (free_str(remainder));
+	{
+		free(remainder);
+		return (NULL);
+	}
 	ft_strlcpy(aux, remainder, len + 1);
 	*new_remainder = ft_strdup(newpos + 1);
 	if (!(*new_remainder))
-	{
-		free(remainder);
-		free(aux);
-		return (NULL);
-	}
+		return (free_str(remainder, aux));
 	free(remainder);
 	return (aux);
 }
@@ -107,7 +108,7 @@ char	*get_next_line(int fd)
 	{
 		remainder = ft_strdup("");
 		if (!remainder)
-			return (free_str(remainder));
+			return (free(remainder), NULL);
 	}
 	remainder = read_line(fd, remainder);
 	if (!remainder)
